@@ -1,9 +1,7 @@
-# Python3 샘플 코드 #
-
-
 import requests
 from dotenv import load_dotenv
 import os
+from tabulate import tabulate
 
 url = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty"
 
@@ -113,52 +111,62 @@ class MyError(Exception):
 try:
     input_sidoName = input("시/도 이름을 입력하세요: ")
 
-    if input_sidoName in valid_sidoName:
-        found = True
+    if input_sidoName not in valid_sidoName:
+        raise MyError("검색 가능한 시/도가 아닙니다")
 
-        if found == True:
+    params = {
+        "serviceKey": api_key,
+        "returnType": "json",
+        "numOfRows": "100",
+        "pageNo": "1",
+        "sidoName": input_sidoName,
+        "ver": "1.0",
+    }
 
-            params = {
-                "serviceKey": api_key,
-                "returnType": "json",
-                "numOfRows": "100",
-                "pageNo": "1",
-                "sidoName": input_sidoName,
-                "ver": "1.0",
-            }
+    response = requests.get(url, params=params)
+    items = response.json()["response"]["body"]["items"]
 
-            response = requests.get(url, params=params)
-            items = response.json()["response"]["body"]["items"]
+    dataset = []
 
-            for item in items:
-                station = item["stationName"]
-                pm10 = int(item["pm10Value"])
-                pm25 = item["pm25Value"]
-                so2 = item["so2Value"]
-                co = item["coValue"]
-                o3 = item["o3Value"]
-                no2 = item["no2Value"]
+    for item in items:
+        station = item["stationName"]
+        pm10 = item["pm10Value"]
+        pm25 = item["pm25Value"]
+        so2 = item["so2Value"]
+        co = item["coValue"]
+        o3 = item["o3Value"]
+        no2 = item["no2Value"]
 
-                ## 홍릉로 다음에 결측치 있어서 에러
-                if pm10 <= 30:
-                    print(
-                        f"{station} :  PM10: {pm10} | PM25: {pm25} | SO2: {so2} | CO: {co} | O3: {o3} | NO2{no2} | 미세먼지 좋음"
-                    )
-                elif pm10 <= 80:
-                    print(
-                        f"{station} :  PM10: {pm10} | PM25: {pm25} | SO2: {so2} | CO: {co} | O3: {o3} | NO2{no2} | 미세먼지 보통"
-                    )
-                elif pm10 <= 150:
-                    print(
-                        f"{station} :  PM10: {pm10} | PM25: {pm25} | SO2: {so2} | CO: {co} | O3: {o3} | NO2{no2} | 미세먼지 나쁨"
-                    )
-                else:
-                    print(
-                        f"{station} :  PM10: {pm10} | PM25: {pm25} | SO2: {so2} | CO: {co} | O3: {o3} | NO2{no2} | 미세먼지 매우 나쁨"
-                    )
+        headers = ["Station", "PM10", "PM25", "SO2", "CO", "O3", "NO3", "미세먼지"]
+
+        data = [station, pm10, pm25, so2, co, o3, no2]
+
+        ## 홍릉로 다음에 결측치 있어서 에러
+        if pm10 == "-":
+            data.append(" - ")
 
         else:
-            raise MyError("검색 가능한 시/도가 아닙니다.")
+            pm10 = int(pm10)
+
+            if pm10 <= 30:
+                data.append("좋음")
+            elif pm10 <= 80:
+                data.append("보통")
+            elif pm10 <= 150:
+                data.append("나쁨")
+            else:
+                data.append("매우 나쁨")
+
+        dataset.append(data)
+
+    print(
+        tabulate(
+            dataset,
+            headers=headers,
+            tablefmt="",
+        )
+    )
+
 
 except MyError as e:
-    print(f"{input_sidoName}은 {e}")
+    print(f"Error: {input_sidoName}은(는)  {e}")
