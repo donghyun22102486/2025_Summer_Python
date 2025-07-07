@@ -27,6 +27,7 @@ api_key = os.getenv("API_KEY")
 #     # "InformCode": "PM10",
 # }
 
+
 ### 1
 
 # response = requests.get(url, params=params)
@@ -142,10 +143,11 @@ try:
         data = [station, pm10, pm25, so2, co, o3, no2]
 
         ## 홍릉로 다음에 결측치 있어서 에러
-        if pm10 == "-":
-            data.append(" - ")
+        # if pm10 == "-" or None:
+        #     data.append(" - ")
+        # else:
 
-        else:
+        try:
             pm10 = int(pm10)
 
             if pm10 <= 30:
@@ -156,6 +158,9 @@ try:
                 data.append("나쁨")
             else:
                 data.append("매우 나쁨")
+
+        except:
+            data.append(" - ")
 
         dataset.append(data)
 
