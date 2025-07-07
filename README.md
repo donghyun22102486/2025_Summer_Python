@@ -42,5 +42,5 @@ Google AI Studio, Google workspace 이용한 Gemini API 연결
 
 ## Data 처리 기초
 
-csv 파일 읽고 쓰기, json 파일로 변환, Pandas 기초
+csv 파일 읽고 쓰기, json 파일로 변환, Pandas 기초<br>
 공공데이터포털 - 서울교통공사\_지하역사\_공기질\_측정\_정보\_20240625.csv
