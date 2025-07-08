@@ -44,3 +44,18 @@ Google AI Studio, Google workspace 이용한 Gemini API 연결
 
 csv 파일 읽고 쓰기, json 파일로 변환, Pandas 기초<br>
 공공데이터포털 - 서울교통공사\_지하역사\_공기질\_측정\_정보\_20240625.csv
+
+# D7
+
+## Data 처리 기초
+
+Pandas 기초: 비교연산자, 그룹핑
+
+## Data 시각화
+
+matplotlib - 데이터 시각화: 그래프
+
+## 팀 프로젝트
+
+공공데이터포털 - 서울 지하철 혼잡도 데이터<br>
+역, 혼잡도 평균, 호선 별 데이터 시각화
