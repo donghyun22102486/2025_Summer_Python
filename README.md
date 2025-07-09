@@ -70,3 +70,8 @@ matplotlib - 데이터 시각화: 그래프
 
 streamlit 사용해 웹으로 구현<br>
 fast api ?
+
+## 프로젝트 2
+
+전국통합식품영양성분정보*음식*표준데이터.csv<br>
+1차 EDA
