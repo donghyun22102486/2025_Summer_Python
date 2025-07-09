@@ -92,12 +92,12 @@ def show_foodratio_eatingtype():
 
     # stacked bar chart로 시각화
     cross_ratio_percent.T.plot(
-        kind="bar", stacked=True, figsize=(12, 6), colormap="tab20"
+        kind="barh", stacked=True, figsize=(5, 10), colormap="tab20"
     )
     plt.title("식사형태별 음식 대분류 구성비 (%)")
-    plt.ylabel("비율 (%)")
-    plt.xlabel("음식 대분류명")
-    plt.xticks(rotation=90)
+    plt.xlabel("비율 (%)")
+    plt.ylabel("음식 대분류명")
+    plt.yticks(rotation=0)
     plt.legend(title="식사형태")
     plt.tight_layout()
     plt.show()
