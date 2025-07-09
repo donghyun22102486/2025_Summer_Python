@@ -22,13 +22,17 @@ class MyError(Exception):
     pass
 
 
-# 시간대별 혼잡도 비교 그래프 그리기
-# line plot
+def load_data():
+
+    df = pd.read_csv("서울교통공사_지하철혼잡도정보_20250331.csv", encoding="utf-8-sig")
+    df["출발역"] = df["출발역"].str.strip()
+    df["상하구분"] = df["상하구분"].str.strip()
+    return df
 
 
 def comparebytime():
 
-    df = pd.read_csv("서울교통공사_지하철혼잡도정보_20250331.csv", encoding="utf-8-sig")
+    df = load_data()
 
     valid_station = df["출발역"].unique()
     print(valid_station)
@@ -38,9 +42,10 @@ def comparebytime():
         if search not in valid_station:
             raise MyError("존재하지 않는 역입니다")
 
-        towhere = input("상/하선 선택: ")
-        if towhere != "상선" and towhere != "하선":
-            raise MyError("상선/하선 중에 선택하세요")
+        towhere = input("상/하/내/외선 선택: ")
+        valid_direction = ["상선", "하선", "내선", "외선"]
+        if towhere not in valid_direction:
+            raise MyError("상선/하선/내선/외선 중에 선택하세요")
 
         # 1. 역 + 선 필터링
         station_towhere = df[(df["출발역"] == search) & (df["상하구분"] == towhere)]
@@ -53,7 +58,7 @@ def comparebytime():
 
         plt.figure(figsize=(12, 5))
         plt.plot(time_columns, congestion, marker="o", color="skyblue")
-        plt.title(f"{search} {towhere}선 - 시간대별 혼잡도")
+        plt.title(f"{search} {towhere} - 시간대별 혼잡도")
         plt.xlabel("시간대")
         plt.ylabel("혼잡도 (%)")
         plt.xticks(rotation=45)
@@ -74,15 +79,8 @@ def comparebytime():
 
 def showtoplow15():
 
-    df = pd.read_csv("서울교통공사_지하철혼잡도정보_20250331.csv", encoding="utf-8-sig")
-    # print(df)
+    df = load_data()
 
-    # df.to_csv("subway_information.csv", index=False, encoding="utf-8-sig")
-
-    # data2 = pd.read_csv("subway_information.csv", encoding="utf-8-sig")
-    # data2.to_csv("subway_information.csv", index=False, encoding="utf-8-sig")
-
-    df = pd.read_csv("서울교통공사_지하철혼잡도정보_20250331.csv", encoding="utf-8-sig")
     time_cols = df.columns[5:]
     df[time_cols] = df[time_cols].apply(pd.to_numeric, errors="coerce")
     df["행평균"] = df[time_cols].mean(axis=1)
@@ -111,11 +109,10 @@ def showtoplow15():
 
 def comparebyline():
 
-    file_path = "서울교통공사_지하철혼잡도정보_20250331.csv"
-    data_or = pd.read_csv(file_path, encoding="utf-8-sig")
+    df = load_data()
 
     try:
-        data = data_or[data_or["요일구분"] == "평일"].copy()
+        data = df[df["요일구분"] == "평일"].copy()
     except KeyError:
         print("'요일구분' 컬럼이 존재하지 않습니다.")
         exit()
@@ -209,16 +206,22 @@ def comparebyline():
         print("시각화 오류:", e)
 
 
-try:
-    choice = int(
-        input("선택(1: 시간대별 추이 / 2: 평균 혼잡도 / 3: 호선별 혼잡도 비교): ")
-    )
+while True:
+    try:
+        choice = int(
+            input(
+                "선택(1: 시간대별 추이 / 2: 평균 혼잡도 / 3: 호선별 혼잡도 비교 / 0: 종료): "
+            )
+        )
 
-    if choice == 1:
-        comparebytime()
-    elif choice == 2:
-        showtoplow15()
-    elif choice == 3:
-        comparebyline()
-except:
-    print("Error: 1,2,3 중 선택해주세요")
+        if choice == 1:
+            comparebytime()
+        elif choice == 2:
+            showtoplow15()
+        elif choice == 3:
+            comparebyline()
+        elif choice == 0:
+            print("프로그램 종료")
+            break
+    except:
+        print("Error: 0,1,2,3 중 선택해주세요")
