@@ -86,3 +86,45 @@ streamlit 기초
 
 1. 식사형태별 음식 대분류 구성비 탭 추가<br>
 2. 식사형태별 영양성분 선택 후 비교 탭 추가
+
+## Fast API
+
+1. 디렉터리 구조
+
+```
+project3/
+├── backend/                         ← FastAPI 백엔드
+│   ├── project3.py                  ← FastAPI 실행 파일 (app = FastAPI())
+│   ├── data/
+│   │   └── 전국통합식품영양성분정보_음식_표준데이터.csv
+│   └── (option) requirements.txt    ← pip freeze > requirements.txt
+│
+├── frontend/                        ← React 프론트엔드 (create-react-app)
+│   ├── food-ui/                     ← npm으로 만든 React 프로젝트
+│   │   ├── package.json
+│   │   ├── node_modules/            ← npm install 후 생성
+│   │   ├── public/
+│   │   └── src/
+│   │       └── App.js               ← 직접 편집한 React 화면
+│   └── ...
+```
+
+2. frontend 라이브러리
+
+```
+- cd frontend/food-ui                ← 프로젝트 폴더 내에서 라이브러리 설치
+- npm install axios chart.js react-chartjs-2
+```
+
+3. 실행 방법
+
+```
+# 백엔드 실행
+cd backend
+python -m uvicorn project3:app --reload
+
+# 프론트엔드 실행
+cd frontend/food-ui
+npm start
+
+```
