@@ -24,14 +24,15 @@ class MyError(Exception):
 
 
 # 데이터 로드 및 결측치 0으로 일괄처리
-df = pd.read_csv("전국통합식품영양성분정보_음식_표준데이터.csv", encoding="utf-8-sig")
+df = pd.read_csv(
+    "projects/전국통합식품영양성분정보_음식_표준데이터.csv", encoding="utf-8-sig"
+)
 df = df.fillna(0)
 # print(df.isnull().sum())
 # print(df.isna().sum())
 
 
 def classify(source):
-
     source = str(source)
 
     if "가정식" in source:
@@ -45,30 +46,6 @@ def classify(source):
 
 
 df["식사형태"] = df["식품기원명"].apply(classify)
-
-
-# 식품 유형 분포 EDA
-def show_foodratio_eatingtype():
-    # 교차표 만들기 (count 기준)
-    cross_tab = pd.crosstab(df["식사형태"], df["식품대분류명"])
-
-    # 비율로 변환 (행 합 기준으로 정규화)
-    cross_ratio = cross_tab.div(cross_tab.sum(axis=1), axis=0)
-
-    # 보기 좋게 비율(%)로 변환
-    cross_ratio_percent = (cross_ratio * 100).round(1)
-
-    # stacked bar chart로 시각화
-    cross_ratio_percent.T.plot(
-        kind="barh", stacked=True, figsize=(5, 10), colormap="tab20"
-    )
-    plt.title("식사형태별 음식 대분류 구성비 (%)")
-    plt.xlabel("비율 (%)")
-    plt.ylabel("음식 대분류명")
-    plt.yticks(rotation=0)
-    plt.legend(title="식사형태")
-    plt.tight_layout()
-    plt.show()
 
 
 # 비교할 영양 성분들
@@ -102,6 +79,32 @@ nutrient_cols = [
 st.title("전국 식품 영양성분 정보")
 
 tab1, tab2 = st.tabs(["식사형태별 음식 대분류 구성비", "식사형태별 영양성분 평균 비교"])
+
+with tab1:
+
+    st.subheader("식사형태별 음식 대분류 구성비")
+
+    # 교차표 만들기 (count 기준)
+    cross_tab = pd.crosstab(df["식사형태"], df["식품대분류명"])
+
+    # 비율로 변환 (행 합 기준으로 정규화)
+    cross_ratio = cross_tab.div(cross_tab.sum(axis=1), axis=0)
+
+    # 보기 좋게 비율(%)로 변환
+    cross_ratio_percent = (cross_ratio * 100).round(1)
+
+    fig, ax = plt.subplots(figsize=(8, 16))
+
+    # stacked bar chart로 시각화
+    cross_ratio_percent.T.plot(kind="barh", stacked=True, ax=ax, colormap="tab20")
+
+    ax.set_title("식사형태별 음식 대분류 구성비 (%)")
+    ax.set_xlabel("비율 (%)")
+    ax.set_ylabel("음식 대분류명")
+    ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
+    ax.legend(title="식사형태")
+    plt.tight_layout()
+    st.pyplot(fig)
 
 # 시각화
 with tab2:
@@ -141,31 +144,5 @@ with tab2:
     plt.title(f"{selected_category} - 영양성분 평균값 (식사형태별)")
     plt.ylabel("값 (단위: kcal / g / mg)")
     plt.xlabel("영양성분")
-    plt.tight_layout()
-    st.pyplot(fig)
-
-with tab1:
-
-    st.subheader("식사형태별 음식 대분류 구성비")
-
-    # 교차표 만들기 (count 기준)
-    cross_tab = pd.crosstab(df["식사형태"], df["식품대분류명"])
-
-    # 비율로 변환 (행 합 기준으로 정규화)
-    cross_ratio = cross_tab.div(cross_tab.sum(axis=1), axis=0)
-
-    # 보기 좋게 비율(%)로 변환
-    cross_ratio_percent = (cross_ratio * 100).round(1)
-
-    fig, ax = plt.subplots(figsize=(8, 16))
-
-    # stacked bar chart로 시각화
-    cross_ratio_percent.T.plot(kind="barh", stacked=True, ax=ax, colormap="tab20")
-
-    ax.set_title("식사형태별 음식 대분류 구성비 (%)")
-    ax.set_xlabel("비율 (%)")
-    ax.set_ylabel("음식 대분류명")
-    ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
-    ax.legend(title="식사형태")
     plt.tight_layout()
     st.pyplot(fig)
