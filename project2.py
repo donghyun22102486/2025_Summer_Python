@@ -71,9 +71,6 @@ def show_foodratio_eatingtype():
     plt.show()
 
 
-# show_foodratio_eatingtype()
-
-
 # 비교할 영양 성분들
 nutrient_cols = [
     "에너지(kcal)",
@@ -102,38 +99,42 @@ nutrient_cols = [
     "트랜스지방산(g)",
 ]
 
-# 사용자 선택 UI
-st.title("음식 대분류별 영양성분 비교")
-selected_category = st.selectbox(
-    "분석할 음식 대분류를 선택하세요", sorted(df["식품대분류명"].unique())
-)
-selected_nutrients = st.multiselect(
-    "분석할 영양성분을 선택하세요",
-    nutrient_cols,
-    default=[
-        "단백질(g)",
-        "지방(g)",
-        "탄수화물(g)",
-    ],
-)
-
-# 필터링
-filtered_df = df[df["식품대분류명"] == selected_category]
-
-# 영양 성분 평균 계산
-avg_nutrients = filtered_df.groupby("식사형태")[selected_nutrients].mean().reset_index()
-
-# melt로 long-format 변환 (Seaborn용)
-# 그래프로 만들기 좋게 길게 풀어 쓰기
-melted = avg_nutrients.melt(id_vars="식사형태", var_name="영양성분", value_name="값")
-
 st.title("전국 식품 영양성분 정보")
 
 tab1, tab2 = st.tabs(["식사형태별 음식 대분류 구성비", "식사형태별 영양성분 평균 비교"])
 
 # 시각화
 with tab2:
+
+    st.subheader("음식 대분류별 영양성분 비교")
+    selected_category = st.selectbox(
+        "분석할 음식 대분류를 선택하세요", sorted(df["식품대분류명"].unique())
+    )
+    selected_nutrients = st.multiselect(
+        "분석할 영양성분을 선택하세요",
+        nutrient_cols,
+        default=[
+            "단백질(g)",
+            "지방(g)",
+            "탄수화물(g)",
+        ],
+    )
+
     st.subheader(f"{selected_category} - 식사형태별 영양성분 평균 비교")
+
+    # 필터링
+    filtered_df = df[df["식품대분류명"] == selected_category]
+
+    # 영양 성분 평균 계산
+    avg_nutrients = (
+        filtered_df.groupby("식사형태")[selected_nutrients].mean().reset_index()
+    )
+
+    # melt로 long-format 변환 (Seaborn용)
+    # 그래프로 만들기 좋게 길게 풀어 쓰기
+    melted = avg_nutrients.melt(
+        id_vars="식사형태", var_name="영양성분", value_name="값"
+    )
 
     fig, ax = plt.subplots(figsize=(10, 4))
     sns.barplot(data=melted, x="영양성분", y="값", hue="식사형태", palette="Set2")
@@ -144,6 +145,9 @@ with tab2:
     st.pyplot(fig)
 
 with tab1:
+
+    st.subheader("식사형태별 음식 대분류 구성비")
+
     # 교차표 만들기 (count 기준)
     cross_tab = pd.crosstab(df["식사형태"], df["식품대분류명"])
 
