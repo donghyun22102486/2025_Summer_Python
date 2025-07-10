@@ -92,28 +92,25 @@ streamlit 기초
 1. 디렉터리 구조
 
 ```
-project3/
-├── backend/                         ← FastAPI 백엔드
-│   ├── project3.py                  ← FastAPI 실행 파일 (app = FastAPI())
-│   ├── data/
-│   │   └── 전국통합식품영양성분정보_음식_표준데이터.csv
-│   └── (option) requirements.txt    ← pip freeze > requirements.txt
+datasets/
+├── 전국통합식품영양성분정보_음식_표준데이터.csv
+foodinfo/
+├── backend/                                    ← FastAPI 백엔드
+│   ├── project3.py                             ← FastAPI 실행 파일 (app = FastAPI())
 │
-├── frontend/                        ← React 프론트엔드 (create-react-app)
-│   ├── food-ui/                     ← npm으로 만든 React 프로젝트
-│   │   ├── package.json
-│   │   ├── node_modules/            ← npm install 후 생성
-│   │   ├── public/
-│   │   └── src/
-│   │       └── App.js               ← 직접 편집한 React 화면
-│   └── ...
+├── frontend/                                   ← React 프론트엔드 (npx create-react-app = npm으로 만든 React 프로젝트)
+│   ├── package.json
+│   ├── node_modules/
+│   ├── public/
+│   └── src/
+│       └── App.js                              ← 직접 편집한 React 화면
 ```
 
-2. frontend 라이브러리
+2. frontend: React 생성 및 라이브러리 설치
 
 ```
-- cd frontend/food-ui                ← 프로젝트 폴더 내에서 라이브러리 설치
-- npm install axios chart.js react-chartjs-2
+- npx create-react-app .                        ← 현재 디렉터리에 React 프로젝트 생성
+- npm install axios chart.js react-chartjs-2    ← 해당 프로젝트에 필요한 라이브러리 설치
 ```
 
 3. 실행 방법
@@ -121,10 +118,10 @@ project3/
 ```
 # 백엔드 실행
 cd backend
-python -m uvicorn project3:app --reload
+python -m uvicorn project3:app --reload         ← 백엔드 fast api 실행
 
 # 프론트엔드 실행
-cd frontend/food-ui
-npm start
+cd frontend
+npm start                                       ← 프론트엔드 React 실행
 
 ```
