@@ -6,7 +6,7 @@ import pandas as pd
 
 # 데이터 로드
 df = pd.read_csv(
-    "../전국통합식품영양성분정보_음식_표준데이터.csv", encoding="utf-8-sig"
+    "../../datasets/전국통합식품영양성분정보_음식_표준데이터.csv", encoding="utf-8-sig"
 )
 df = df.fillna(0)
 
@@ -80,3 +80,4 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+## error 304 403
