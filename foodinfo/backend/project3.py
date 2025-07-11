@@ -80,4 +80,4 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-## error 304 403
+# 나중엔 이 부분에서 에러가 꽤 자주 생긴다 ?
